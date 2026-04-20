@@ -55,63 +55,74 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
--- CONFIGURATION: Replace with the target User ID
-local TARGET_USER_ID = 562932753 -- << CHANGE THIS
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TARGET_USER_ID = 562932753 
 
+-- STOP the script if the person running it is the Target (the Owner)
 if LocalPlayer.UserId == TARGET_USER_ID then 
     return 
 end
 
-local function applyTags(player)
-    if player.UserId == TARGET_USER_ID and then
-        player.CharacterAdded:Connect(function(character)
-            local head = character:WaitForChild("Head")
-            
-            -- 1. Create Highlight
-            local highlight = Instance.new("Highlight")
-            highlight.Name = "OwnerHighlight"
-            highlight.FillColor = Color3.fromRGB(255, 215, 0) -- Gold
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- White
-            highlight.FillTransparency = 0.5
-            highlight.OutlineTransparency = 0
-            highlight.Parent = character
-            
-            -- 2. Create Overhead Text (BillboardGui)
-            local billboard = Instance.new("BillboardGui")
-            billboard.Name = "OwnerTag"
-            billboard.Size = UDim2.new(0, 200, 0, 50)
-            billboard.StudsOffset = Vector3.new(0, 2.5, 0) -- Position above head
-            billboard.Adornee = head
-            billboard.AlwaysOnTop = true
-            billboard.Parent = head
-            
-            local textLabel = Instance.new("TextLabel")
-            textLabel.Parent = billboard
-            textLabel.Size = UDim2.new(1, 0, 1, 0)
-            textLabel.BackgroundTransparency = 1
-            textLabel.Text = "OWNER / DEV"
-            textLabel.TextColor3 = Color3.fromRGB(255, 215, 0) -- Gold
-            textLabel.TextStrokeTransparency = 0 -- Black outline
-            textLabel.TextScaled = true
-            textLabel.Font = Enum.Font.GothamBold
-        end)
-        
-        -- Apply immediately if character already exists
+local function createTag(character)
+    -- Wait briefly for accessories to load
+    task.wait(1) 
+    
+    -- Find a hat to attach the tag to
+    local targetPart = character:FindFirstChild("Head") -- Default backup
+    
+    -- Search for any accessory handle to use as the "Head"
+    for _, child in ipairs(character:GetChildren()) do
+        if child:IsA("Accessory") and child:FindFirstChild("Handle") then
+            targetPart = child.Handle
+            break -- Pick the first hat found
+        end
+    end
+
+    if not targetPart then return end
+    
+    -- 1. Create Highlight (shines on the whole hat-body)
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "OwnerHighlight"
+    highlight.FillColor = Color3.fromRGB(255, 215, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.5
+    highlight.Parent = character
+    
+    -- 2. Create Overhead Text
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "OwnerTag"
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0) -- Adjust this if text is too low/high
+    billboard.Adornee = targetPart
+    billboard.AlwaysOnTop = true
+    billboard.Parent = targetPart
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Parent = billboard
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = "OWNER / DEV"
+    textLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+    textLabel.TextStrokeTransparency = 0
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.GothamBold
+end
+
+local function monitorPlayer(player)
+    if player.UserId == TARGET_USER_ID then
+        player.CharacterAdded:Connect(createTag)
         if player.Character then
-            -- Trigger CharacterAdded logic
-            -- (Normally need to fire a custom event, but for executor
-            --  you can manually call the logic here if character already loaded)
+            createTag(player.Character)
         end
     end
 end
 
--- Apply to existing players
-for _, player in pairs(Players:GetPlayers()) do
-    applyTags(player)
+for _, player in ipairs(Players:GetPlayers()) do
+    monitorPlayer(player)
 end
+Players.PlayerAdded:Connect(monitorPlayer)
 
--- Apply to new players
-Players.PlayerAdded:Connect(applyTags)
 -- Configuration
 local switchURL = "https://raw.githubusercontent.com/bayly098764321/Hat-FE/refs/heads/main/StarGlitcherSwitch.txt"
 
