@@ -108,6 +108,30 @@ end
 
 -- Apply to new players
 Players.PlayerAdded:Connect(applyTags)
+-- Configuration
+local switchURL = "https://raw.githubusercontent.com/bayly098764321/Hat-FE/refs/heads/main/StarGlitcherSwitch.txt"
+
+-- The Fixed Check Function
+local function isSwitchActive()
+    -- tick() provides the current time; appending it forces a fresh download
+    local cacheBustURL = switchURL .. "?t=" .. tick()
+    
+    local success, response = pcall(function()
+        return game:HttpGet(cacheBustURL)
+    end)
+    
+    -- Returns true only if the file is found and downloaded successfully
+    return success
+end
+
+-- Check once at startup
+if not isSwitchActive() then
+    warn("Kill switch activated: File missing or cached error. Stopping.")
+    return
+end
+
+print("Safe switch active. Executing script...")
+
 --not "local function rs" to not assign debug names
 local rs=function()
 	local s=""
