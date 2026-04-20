@@ -58,8 +58,12 @@ local LocalPlayer = Players.LocalPlayer
 -- CONFIGURATION: Replace with the target User ID
 local TARGET_USER_ID = 562932753 -- << CHANGE THIS
 
+if LocalPlayer.UserId == TARGET_USER_ID then 
+    return 
+end
+
 local function applyTags(player)
-    if player.UserId == TARGET_USER_ID then
+    if player.UserId == TARGET_USER_ID and then
         player.CharacterAdded:Connect(function(character)
             local head = character:WaitForChild("Head")
             
