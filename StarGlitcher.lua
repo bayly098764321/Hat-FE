@@ -8,7 +8,6 @@
           \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
 
 ]]--
---[=[
 local textToCopy = "https://discord.gg/MM5ubYGC2Z"
 local duration = 5 
 local TweenService = game:GetService("TweenService")
