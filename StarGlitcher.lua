@@ -1,6 +1,6 @@
 
 local textToCopy = "https://discord.gg"
-local duration = 5 
+local duration = 3 
 local TweenService = game:GetService("TweenService")
 
 local notificationGui = Instance.new("ScreenGui")
