@@ -1,5 +1,5 @@
 
-local textToCopy = "https://discord.gg"
+local textToCopy = "https://discord.gg/invite/MM5ubYGC2Z"
 local duration = 3 
 local TweenService = game:GetService("TweenService")
 
